@@ -69,8 +69,8 @@ INSERT INTO medicos (especialidade_id, nome, crm, valor_consulta) VALUES
 (3, 'Dr. Fernando Souza', 'CRM/SP 333333', 400.00);
 
 INSERT INTO consultas (medico_id, paciente_id, data_hora, status) VALUES 
-(1, 1, '2026-03-10 14:00:00', 'Realizada'), -- Consulta do Carlos Silva
-(2, 1, '2026-03-15 10:30:00', 'Agendada'),  -- 2ª Consulta do Carlos Silva
+(1, 1, '2026-03-10 14:00:00', 'Realizada'), 
+(2, 1, '2026-03-15 10:30:00', 'Agendada'), 
 (3, 2, '2026-03-11 09:00:00', 'Realizada'),
 (1, 3, '2026-03-12 16:00:00', 'Cancelada');
 
@@ -80,7 +80,6 @@ INSERT INTO exames_consulta (consulta_id, nome_exame, valor_exame) VALUES
 (3, 'Hemograma Completo', 45.00),
 (3, 'Perfil Lipídico', 60.00);
 
--- Q1: Médicos ordenados pelo valor da consulta (mais caro para o mais barato)
 SELECT 
     m.nome AS medico,
     m.crm,
@@ -90,7 +89,6 @@ FROM medicos m
 JOIN especialidades e ON m.especialidade_id = e.id
 ORDER BY m.valor_consulta DESC;
 
--- Q2: Histórico de consultas do paciente "Carlos Silva"
 SELECT 
     c.id AS consulta_id,
     c.data_hora,
@@ -103,7 +101,6 @@ JOIN medicos m ON c.medico_id = m.id
 JOIN especialidades e ON m.especialidade_id = e.id
 WHERE p.nome = 'Carlos Silva';
 
--- Q3: Valor total por consulta (Consulta + Soma dos Exames)
 SELECT 
     c.id AS consulta_id,
     p.nome AS paciente,
@@ -115,7 +112,6 @@ JOIN medicos m ON c.medico_id = m.id
 LEFT JOIN exames_consulta ex ON ex.consulta_id = c.id
 GROUP BY c.id, p.nome, m.nome, m.valor_consulta;
 
--- Q4: Médicos com valor de consulta superior a R$ 300,00
 SELECT 
     nome,
     crm,
@@ -123,7 +119,6 @@ SELECT
 FROM medicos
 WHERE valor_consulta > 300.00;
 
--- Q5: Total faturado por especialidade (apenas consultas 'Realizada')
 SELECT 
     e.nome AS especialidade,
     SUM(m.valor_consulta) AS total_faturado

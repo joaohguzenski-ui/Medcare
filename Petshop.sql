@@ -51,36 +51,36 @@ CREATE TABLE exames_consulta (
         REFERENCES consultas(id)
 );
 
-INSERT INTO especialidades (nome) VALUES 
+INSERT INTO especialidades (nome) values 
 ('Cardiologia'),
 ('Pediatria'),
 ('Dermatologia');
 
 
-INSERT INTO pacientes (nome, email, cpf, data_nascimento) VALUES 
+INSERT INTO pacientes (nome, email, cpf, data_nascimento) values 
 ('Carlos Silva', 'carlos.silva@email.com', '12345678901', '1985-05-15'),
 ('Ana Oliveira', 'ana.oliveira@email.com', '98765432100', '1992-10-20'),
 ('Mariana Santos', 'mariana.santos@email.com', '45678912305', '1978-03-08');
 
 
-INSERT INTO medicos (especialidade_id, nome, crm, valor_consulta) VALUES 
+INSERT INTO medicos (especialidade_id, nome, crm, valor_consulta) values 
 (1, 'Dr. Roberto Costa', 'CRM/SP 111111', 350.00),
 (2, 'Dra. Patricia Lima', 'CRM/SP 222222', 250.00),
 (3, 'Dr. Fernando Souza', 'CRM/SP 333333', 400.00);
 
-INSERT INTO consultas (medico_id, paciente_id, data_hora, status) VALUES 
+INSERT INTO consultas (medico_id, paciente_id, data_hora, status) values 
 (1, 1, '2026-03-10 14:00:00', 'Realizada'), 
 (2, 1, '2026-03-15 10:30:00', 'Agendada'), 
 (3, 2, '2026-03-11 09:00:00', 'Realizada'),
 (1, 3, '2026-03-12 16:00:00', 'Cancelada');
 
-INSERT INTO exames_consulta (consulta_id, nome_exame, valor_exame) VALUES 
+INSERT INTO exames_consulta (consulta_id, nome_exame, valor_exame) values 
 (1, 'Eletrocardiograma', 120.00),
 (1, 'Ecocardiograma', 250.00),
 (3, 'Hemograma Completo', 45.00),
 (3, 'Perfil Lipídico', 60.00);
 
-SELECT 
+select 
     m.nome AS medico,
     m.crm,
     e.nome AS especialidade,
@@ -89,7 +89,7 @@ FROM medicos m
 JOIN especialidades e ON m.especialidade_id = e.id
 ORDER BY m.valor_consulta DESC;
 
-SELECT 
+select 
     c.id AS consulta_id,
     c.data_hora,
     m.nome AS medico,
@@ -101,7 +101,7 @@ JOIN medicos m ON c.medico_id = m.id
 JOIN especialidades e ON m.especialidade_id = e.id
 WHERE p.nome = 'Carlos Silva';
 
-SELECT 
+select 
     c.id AS consulta_id,
     p.nome AS paciente,
     m.nome AS medico,
@@ -112,14 +112,14 @@ JOIN medicos m ON c.medico_id = m.id
 LEFT JOIN exames_consulta ex ON ex.consulta_id = c.id
 GROUP BY c.id, p.nome, m.nome, m.valor_consulta;
 
-SELECT 
+select 
     nome,
     crm,
     valor_consulta
 FROM medicos
 WHERE valor_consulta > 300.00;
 
-SELECT 
+select 
     e.nome AS especialidade,
     SUM(m.valor_consulta) AS total_faturado
 FROM consultas c
@@ -127,3 +127,22 @@ JOIN medicos m ON c.medico_id = m.id
 JOIN especialidades e ON m.especialidade_id = e.id
 WHERE c.status = 'Realizada'
 GROUP BY e.nome;
+
+select 
+    m.nome AS medico,
+    m.crm,
+    e.nome AS especialidade,
+    m.valor_consulta
+FROM medicos m
+INNER JOIN especialidades e ON m.especialidade_id = e.id
+WHERE m.valor_consulta > 300.00;
+
+select 
+    e.nome AS especialidade,
+    COUNT(c.id) AS quantidade_consultas,
+    COALESCE(SUM(m.valor_consulta), 0.00) AS faturamento_consultas
+FROM especialidades e
+INNER JOIN medicos m ON e.id = m.especialidade_id
+LEFT JOIN consultas c ON m.id = c.medico_id AND c.status = 'Realizada'
+GROUP BY e.id, e.nome
+ORDER BY faturamento_consultas DESC;

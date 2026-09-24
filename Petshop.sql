@@ -1,4 +1,4 @@
-colocar códigos e etc(sql)
+
 
 CREATE TABLE especialidades (
     id SERIAL PRIMARY KEY,
@@ -112,6 +112,7 @@ JOIN medicos m ON c.medico_id = m.id
 LEFT JOIN exames_consulta ex ON ex.consulta_id = c.id
 GROUP BY c.id, p.nome, m.nome, m.valor_consulta;
 
+create VIEW
 select 
     nome,
     crm,
@@ -119,6 +120,7 @@ select
 FROM medicos
 WHERE valor_consulta > 300.00;
 
+create view
 select 
     e.nome AS especialidade,
     SUM(m.valor_consulta) AS total_faturado
@@ -128,6 +130,7 @@ JOIN especialidades e ON m.especialidade_id = e.id
 WHERE c.status = 'Realizada'
 GROUP BY e.nome;
 
+create view
 select 
     m.nome AS medico,
     m.crm,
@@ -137,6 +140,7 @@ FROM medicos m
 INNER JOIN especialidades e ON m.especialidade_id = e.id
 WHERE m.valor_consulta > 300.00;
 
+create view
 select 
     e.nome AS especialidade,
     COUNT(c.id) AS quantidade_consultas,
